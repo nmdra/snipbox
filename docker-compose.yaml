@@ -11,3 +11,27 @@ services:
       - PORT=4000
     volumes:
       - ./:/app
+    networks:
+      - snipbox-net
+
+  db:
+    image: mysql:lts 
+    container_name: snipbox-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: snipbox_dev
+    ports:
+      - "3306:3306" # Expose MySQL port
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - snipbox-net
+  
+volumes:
+  mysql-data:
+    external: true
+
+networks:
+  snipbox-net:
+    driver: bridge
