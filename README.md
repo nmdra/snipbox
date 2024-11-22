@@ -14,7 +14,7 @@ This section highlights the modifications made to the original project as descri
 ---
 
 <div align="center">
-  <a href="blog.nimendra.xtz"> 🌎 nmdra.xyz</a> |
+  <a href="blog.nimendra.xyz"> 🌎 nmdra.xyz</a> |
   <a href="https://github.com/nmdra"> 👨‍💻 Github</a> |
   <a href="https://twitter.com/nimendra_"> 🐦 Twitter</a>
 </div>
