@@ -1,32 +1,42 @@
 package main
 
 import (
-	"log"
+	"flag"
+	"log/slog"
 	"net/http"
 	"os"
 )
 
+type applog struct {
+	Logger *slog.Logger
+}
+
 func main() {
-	PORT := os.Getenv("PORT")
-	if PORT == "" {
-		log.Println("Port is not set")
-        PORT = "4000"
-    }
 
-	mux := http.NewServeMux()
+	var port = flag.String("port", "4000", "HTTP network address")
 
-	fileServer := http.FileServer(http.Dir("./ui/static/"))
+	flag.Parse()
 
-	mux.Handle("GET /static/", http.StripPrefix("/static",neuter(fileServer)))
+	// setup logger
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
-	mux.HandleFunc("GET /{$}", home)
-	mux.HandleFunc("GET /snippet/view/{id...}", snippetView)
-	mux.HandleFunc("GET /snippet/create", snippetCreate)
+	log := &applog{
+		Logger: logger,
+	}
 
-	mux.HandleFunc("POST /snippet/create", snippetCreatePost)
+	// logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
-	log.Printf("Starting server on Port %s\n", PORT)
+	envPort := os.Getenv("PORT") // for docker
+	if envPort != "" {
+		*port = envPort
+		log.Logger.Info("Using environment variable PORT:" + *port)
+	} else {
+		log.Logger.Warn("Environment variable PORT is not set, using default or flag value")
+	}
 
-	err := http.ListenAndServe(":"+PORT, mux)
-	log.Fatal("Error in Server Starting:", err)
+	log.Logger.Info("Starting server", slog.Any("PORT", *port))
+
+	err := http.ListenAndServe(":"+*port, log.routes())
+	log.Logger.Error(err.Error())
+	os.Exit(1)
 }
