@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-func (log *applog) routes() *http.ServeMux {
+func (log *application) routes() *http.ServeMux {
 	mux := http.NewServeMux()
 
 	fileServer := http.FileServer(http.Dir("./ui/static/"))

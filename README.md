@@ -9,9 +9,97 @@ Repo for snippetbox project as part of Let's Go! book by Alex Edwards
 This section highlights the modifications made to the original project as described in the Let's Go book:
 
 - Creating a Docker-driven Go development workflow
-- Add live realod using [air](https://github.com/air-verse/air)
+- Add live realod using [air-verse/air](https://github.com/air-verse/air)
 
 ---
+## Setup Mysql docker container 
+
+### Docker Compose File
+
+```yml
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: snipbox-dev
+    ports:
+      - "4000:4000" # default app port
+      - "4001:4001" # air proxy port (Optional)
+    environment:
+      - PORT=4000 # default app port 
+    volumes:
+      - ./:/app
+    networks:
+      - snipbox-net
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:lts 
+    container_name: snipbox-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: snippetbox
+      MYSQL_USER: web
+      MYSQL_PASSWORD: pass
+    ports:
+      - "3306:3306" # Optinal
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - snipbox-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 2
+  
+volumes:
+  mysql-data:
+    external: true # Use external vluume for data persistence
+
+networks:
+  snipbox-net:
+    driver: bridge
+```
+
+### Setup User
+
+>  [!IMPORTANT]  
+>  **We use `%` instead of `localhost` because**:
+> - `'localhost'` restricts the user to connect **only from the same machine** where the MySQL server is running.
+> - In this workflow, MySQL runs in a separate container, so `localhost` doesn't work for external connections.
+> - Using `%` allows the user to connect from any host, enabling communication between containers.
+
+
+1. Create User
+```sql
+CREATE USER 'web'@'%';
+```
+
+2. Grant access
+```sql
+GRANT SELECT, INSERT, UPDATE, DELETE ON snippetbox.* TO 'web'@'%';
+```
+
+```sql
+-- Important: Make sure to swap 'pass' with a password of your own choosing.
+ALTER USER 'web'@'%' IDENTIFIED BY 'pass';
+```
+
+3. Check users
+```sql
+SELECT user, host FROM mysql.user;
+```
+
+4. Connection String
+```go
+dsn := flag.String("dsn", "web:pass@tcp(mysql:3306)/snippetbox?parseTime=true", "MySQL data source name")
+```
+
 
 <div align="center">
   <a href="blog.nimendra.xyz"> 🌎 nmdra.xyz</a> |

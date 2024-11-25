@@ -5,7 +5,7 @@ import (
 	"runtime/debug"
 )
 
-func (log *applog) serverError(w http.ResponseWriter, r *http.Request, err error) {
+func (log *application) serverError(w http.ResponseWriter, r *http.Request, err error) {
 	var (
 		method = r.Method
 		uri    = r.URL.RequestURI()
@@ -16,6 +16,6 @@ func (log *applog) serverError(w http.ResponseWriter, r *http.Request, err error
 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
 
-// func (log *applog) clientError(w http.ResponseWriter, status int) {
+// func (log *application) clientError(w http.ResponseWriter, status int) {
 //     http.Error(w, http.StatusText(status), status)
 // }

@@ -13,20 +13,30 @@ services:
       - ./:/app
     networks:
       - snipbox-net
+    depends_on:
+      db:
+        condition: service_healthy
 
   db:
     image: mysql:lts 
     container_name: snipbox-db
-    restart: always
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: snipbox_dev
+      MYSQL_DATABASE: snippetbox
+      MYSQL_USER: web
+      MYSQL_PASSWORD: pass
     ports:
       - "3306:3306" # Expose MySQL port
     volumes:
       - mysql-data:/var/lib/mysql
     networks:
       - snipbox-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 2
   
 volumes:
   mysql-data:
