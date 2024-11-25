@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"flag"
+	"html/template"
 	"log/slog"
 	"net/http"
 	"os"
@@ -13,8 +14,9 @@ import (
 )
 
 type application struct {
-	Logger *slog.Logger
-	snippets *models.SnippetModel
+	Logger        *slog.Logger
+	snippets      *models.SnippetModel
+	templateCache map[string]*template.Template
 }
 
 func main() {
@@ -27,16 +29,23 @@ func main() {
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
 	db, err := openDB(*dsn)
-    if err != nil {
-        logger.Error(err.Error())
-        os.Exit(1)
-    }
+	if err != nil {
+		logger.Error(err.Error())
+		os.Exit(1)
+	}
 
 	defer db.Close()
 
+	templateCache, err := newTemplateCache()
+	if err != nil {
+		logger.Error(err.Error())
+		os.Exit(1)
+	}
+
 	app := &application{
-		Logger: logger,
-		snippets: &models.SnippetModel{DB: db},
+		Logger:        logger,
+		snippets:      &models.SnippetModel{DB: db},
+		templateCache: templateCache,
 	}
 
 	// logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
@@ -57,16 +66,16 @@ func main() {
 }
 
 func openDB(dsn string) (*sql.DB, error) {
-    db, err := sql.Open("mysql", dsn)
-    if err != nil {
-        return nil, err
-    }
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		return nil, err
+	}
 
-    err = db.Ping()
-    if err != nil {
-        db.Close()
-        return nil, err
-    }
+	err = db.Ping()
+	if err != nil {
+		db.Close()
+		return nil, err
+	}
 
-    return db, nil
+	return db, nil
 }
