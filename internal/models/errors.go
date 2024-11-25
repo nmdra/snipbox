@@ -1,7 +1,7 @@
 package models
 
 import (
-    "errors"
+	"errors"
 )
 
 var ErrNoRecord = errors.New("models: no matching record found")
