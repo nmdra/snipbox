@@ -19,9 +19,9 @@ func (app *application) serverError(w http.ResponseWriter, r *http.Request, err 
 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
 
-// func (log *application) clientError(w http.ResponseWriter, status int) {
-//     http.Error(w, http.StatusText(status), status)
-// }
+func (log *application) clientError(w http.ResponseWriter, status int) {
+    http.Error(w, http.StatusText(status), status)
+}
 
 func (app *application) render(w http.ResponseWriter, r *http.Request, status int, page string, data templateData) {
 	ts, ok := app.templateCache[page]

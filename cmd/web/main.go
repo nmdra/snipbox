@@ -9,7 +9,8 @@ import (
 	"os"
 
 	"github.com/nmdra/snipbox/internal/models"
-
+	
+	"github.com/go-playground/form/v4"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -17,6 +18,7 @@ type application struct {
 	Logger        *slog.Logger
 	snippets      *models.SnippetModel
 	templateCache map[string]*template.Template
+	formDecoder   *form.Decoder
 }
 
 func main() {
@@ -42,10 +44,13 @@ func main() {
 		os.Exit(1)
 	}
 
+	formDecoder := form.NewDecoder()
+
 	app := &application{
 		Logger:        logger,
 		snippets:      &models.SnippetModel{DB: db},
 		templateCache: templateCache,
+		formDecoder:   formDecoder,
 	}
 
 	// logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
