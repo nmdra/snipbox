@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"os"
 	"strconv"
 
 	"github.com/nmdra/snipbox/internal/models"
@@ -12,14 +11,8 @@ import (
 
 // Home Handler
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	hostname, err := os.Hostname()
-	if err != nil {
-		// If there's an error, set a default value
-		hostname = "unknown"
-	}
-
-	w.Header().Add("server", hostname)
-
+	// panic("oops! something went wrong") 
+	
 	snippets, err := app.snippets.Latest()
 	if err != nil {
 		app.serverError(w, r, err)
