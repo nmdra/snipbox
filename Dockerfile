@@ -12,8 +12,8 @@ COPY go.mod /app/
 
 RUN go mod download 
 
-ENV PORT=3000
+# ENV PORT=3000
 
-EXPOSE ${PORT}
+# EXPOSE ${PORT}
 
 CMD ["air", "-c", ".air.toml"]

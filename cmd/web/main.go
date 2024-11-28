@@ -7,9 +7,12 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/nmdra/snipbox/internal/models"
-	
+
+	"github.com/alexedwards/scs/mysqlstore"
+	"github.com/alexedwards/scs/v2"
 	"github.com/go-playground/form/v4"
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -19,10 +22,10 @@ type application struct {
 	snippets      *models.SnippetModel
 	templateCache map[string]*template.Template
 	formDecoder   *form.Decoder
+	sessionManager *scs.SessionManager
 }
 
 func main() {
-
 	var port = flag.String("port", "4000", "HTTP network address")
 	dsn := flag.String("dsn", "web:pass@tcp(db:3306)/snippetbox?parseTime=true", "MySQL data source name")
 	flag.Parse()
@@ -46,11 +49,16 @@ func main() {
 
 	formDecoder := form.NewDecoder()
 
+	sessionManager := scs.New()
+	sessionManager.Store = mysqlstore.New(db)
+	sessionManager.Lifetime = 12 * time.Hour
+
 	app := &application{
 		Logger:        logger,
 		snippets:      &models.SnippetModel{DB: db},
 		templateCache: templateCache,
 		formDecoder:   formDecoder,
+		sessionManager: sessionManager,
 	}
 
 	// logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
