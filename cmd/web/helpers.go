@@ -20,7 +20,7 @@ func (app *application) serverError(w http.ResponseWriter, r *http.Request, err 
 }
 
 func (log *application) clientError(w http.ResponseWriter, status int) {
-    http.Error(w, http.StatusText(status), status)
+	http.Error(w, http.StatusText(status), status)
 }
 
 func (app *application) render(w http.ResponseWriter, r *http.Request, status int, page string, data templateData) {
@@ -36,7 +36,10 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, status in
 	err := ts.ExecuteTemplate(buf, "base", data)
 	if err != nil {
 		app.serverError(w, r, err)
+		return
 	}
+
+	// w.Header().Set("Content-Length", "this isn't an integer!")
 
 	w.WriteHeader(status)
 

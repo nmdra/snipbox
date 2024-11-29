@@ -13,8 +13,8 @@ import (
 
 // Home Handler
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	// panic("oops! something went wrong") 
-	
+	// panic("oops! something went wrong")
+
 	snippets, err := app.snippets.Latest()
 	if err != nil {
 		app.serverError(w, r, err)
@@ -56,32 +56,32 @@ func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
 
 	data.Form = snippetCreateForm{
-        Expires: 365,
-    }
+		Expires: 365,
+	}
 
 	app.render(w, r, http.StatusOK, "create.tmpl", data)
 }
 
 type snippetCreateForm struct {
-    Title       string `form:"title"`
-    Content     string `form:"content"`
-    Expires     int    `form:"expires"`
-    validator.Validator `form:"-"`
+	Title               string `form:"title"`
+	Content             string `form:"content"`
+	Expires             int    `form:"expires"`
+	validator.Validator `form:"-"`
 }
 
 func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request) {
 	var form snippetCreateForm
 
 	err := app.decodePostForm(r, &form)
-    if err != nil {
-        app.clientError(w, http.StatusBadRequest)
-        return
-    }
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
 
 	form.CheckField(validator.NotBlank(form.Title), "title", "This field cannot be blank")
-    form.CheckField(validator.MaxChars(form.Title, 100), "title", "This field cannot be more than 100 characters long")
-    form.CheckField(validator.NotBlank(form.Content), "content", "This field cannot be blank")
-    form.CheckField(validator.PermittedValue(form.Expires, 1, 7, 365), "expires", "This field must equal 1, 7 or 365")
+	form.CheckField(validator.MaxChars(form.Title, 100), "title", "This field cannot be more than 100 characters long")
+	form.CheckField(validator.NotBlank(form.Content), "content", "This field cannot be blank")
+	form.CheckField(validator.PermittedValue(form.Expires, 1, 7, 365), "expires", "This field must equal 1, 7 or 365")
 
 	if !form.Valid() {
 		data := app.newTemplateData(r)
@@ -91,10 +91,10 @@ func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request
 	}
 
 	id, err := app.snippets.Insert(form.Title, form.Content, form.Expires)
-    if err != nil {
-        app.serverError(w, r, err)
-        return
-    }
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
 
 	app.sessionManager.Put(r.Context(), "flash", "Snippet successfully created!")
 
@@ -102,21 +102,21 @@ func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request
 }
 
 func (app *application) decodePostForm(r *http.Request, dst any) error {
-    err := r.ParseForm()
-    if err != nil {
-        return err
-    }
+	err := r.ParseForm()
+	if err != nil {
+		return err
+	}
 
-    err = app.formDecoder.Decode(dst, r.PostForm)
-    if err != nil {
-        var invalidDecoderError *form.InvalidDecoderError
-        
-        if errors.As(err, &invalidDecoderError) {
-            panic(err)
-        }
+	err = app.formDecoder.Decode(dst, r.PostForm)
+	if err != nil {
+		var invalidDecoderError *form.InvalidDecoderError
 
-        return err
-    }
+		if errors.As(err, &invalidDecoderError) {
+			panic(err)
+		}
 
-    return nil
+		return err
+	}
+
+	return nil
 }

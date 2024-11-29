@@ -1,8 +1,8 @@
 package main
 
 import (
-	"net/http"
 	"github.com/justinas/alice"
+	"net/http"
 )
 
 func (app *application) routes() http.Handler {
@@ -14,13 +14,13 @@ func (app *application) routes() http.Handler {
 
 	dynamic := alice.New(app.sessionManager.LoadAndSave)
 
-	mux.Handle("GET /{$}",dynamic.ThenFunc(app.home))
-	mux.Handle("GET /snippet/view/{id...}",dynamic.ThenFunc(app.snippetView))
-	mux.Handle("GET /snippet/create",dynamic.ThenFunc(app.snippetCreate))
+	mux.Handle("GET /{$}", dynamic.ThenFunc(app.home))
+	mux.Handle("GET /snippet/view/{id...}", dynamic.ThenFunc(app.snippetView))
+	mux.Handle("GET /snippet/create", dynamic.ThenFunc(app.snippetCreate))
 
-	mux.Handle("POST /snippet/create",dynamic.ThenFunc(app.snippetCreatePost))
+	mux.Handle("POST /snippet/create", dynamic.ThenFunc(app.snippetCreatePost))
 
 	standard := alice.New(app.recoverPanic, app.logRequest, commonHeaders)
 
-	return standard.Then(mux) 
+	return standard.Then(mux)
 }
