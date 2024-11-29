@@ -29,4 +29,5 @@ tmp
 
 # tls
 
-tls/**
+cert.pem
+key.pem
