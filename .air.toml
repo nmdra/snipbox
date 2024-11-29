@@ -44,7 +44,7 @@ tmp_dir = "tmp"
 
 [proxy]
   app_port = 4000
-  enabled = true
+  enabled = false 
   proxy_port = 4001
 
 [screen]
