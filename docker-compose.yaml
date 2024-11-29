@@ -6,7 +6,7 @@ services:
     container_name: snipbox-dev
     ports:
       - "4000:4000" # default app port
-      - "4001:4001" # air proxy port
+      # - "4001:4001" # air proxy port
     environment:
       - PORT=4000
     volumes:
