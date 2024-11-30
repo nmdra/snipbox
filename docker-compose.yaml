@@ -7,8 +7,8 @@ services:
     ports:
       - "4000:4000" # default app port
       # - "4001:4001" # air proxy port
-    environment:
-      - PORT=4000
+    env_file:
+      - .env
     volumes:
       - ./:/app
     networks:
@@ -27,7 +27,7 @@ services:
       MYSQL_USER: web
       MYSQL_PASSWORD: pass
     ports:
-      - "3306:3306" # Expose MySQL port
+      - "3306:3306" # Expose MySQL port (Optional)
     volumes:
       - mysql-data:/var/lib/mysql
     networks:
