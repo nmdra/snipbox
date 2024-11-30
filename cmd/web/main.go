@@ -28,8 +28,12 @@ type application struct {
 }
 
 func main() {
+
+	dbconn := &database{}
+	dbconn.setDBConnection()
+
 	var port = flag.String("port", "4000", "HTTP network address")
-	dsn := flag.String("dsn", "web:pass@tcp(db:3306)/snippetbox?parseTime=true", "MySQL data source name")
+	dsn := flag.String("dsn", dbconn.connectionString(), "MySQL data source name")
 	flag.Parse()
 
 	// setup logger
