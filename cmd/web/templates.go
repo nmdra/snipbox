@@ -11,11 +11,11 @@ import (
 )
 
 type templateData struct {
-	Snippet     models.Snippet
-	Snippets    []models.Snippet
-	CurrentYear int
-	Form        any
-	Flash       string
+	Snippet         models.Snippet
+	Snippets        []models.Snippet
+	CurrentYear     int
+	Form            any
+	Flash           string
 	IsAuthenticated bool
 	CSRFToken       string
 }
@@ -31,7 +31,7 @@ var functions = template.FuncMap{
 func newTemplateCache() (map[string]*template.Template, error) {
 	cache := map[string]*template.Template{}
 
-	pages, err := fs.Glob(ui.Files,"html/pages/*.tmpl")
+	pages, err := fs.Glob(ui.Files, "html/pages/*.tmpl")
 	if err != nil {
 		return nil, err
 	}
@@ -40,15 +40,15 @@ func newTemplateCache() (map[string]*template.Template, error) {
 		name := filepath.Base(page)
 
 		patterns := []string{
-            "html/base.tmpl",
-            "html/partials/*.tmpl",
-            page,
-        }
+			"html/base.tmpl",
+			"html/partials/*.tmpl",
+			page,
+		}
 
-        ts, err := template.New(name).Funcs(functions).ParseFS(ui.Files, patterns...)
-        if err != nil {
-            return nil, err
-        }
+		ts, err := template.New(name).Funcs(functions).ParseFS(ui.Files, patterns...)
+		if err != nil {
+			return nil, err
+		}
 
 		cache[name] = ts
 	}

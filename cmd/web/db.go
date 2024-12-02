@@ -7,12 +7,12 @@ import (
 )
 
 type database struct {
-	user string
-	pass string
-	dbhost string
-	port string
+	user     string
+	pass     string
+	dbhost   string
+	port     string
 	protocol string
-	dbname string
+	dbname   string
 }
 
 func (db *database) setDBConnection() {
@@ -24,12 +24,12 @@ func (db *database) setDBConnection() {
 	db.dbname = getEnv("DB_NAME")
 }
 
-func getEnv(key string) string{
+func getEnv(key string) string {
 	if value, exists := os.LookupEnv(key); exists {
 		return value
 	}
 	log.Fatalf("%s not found", key)
-	return "" 
+	return ""
 }
 
 func (db *database) connectionString() string {

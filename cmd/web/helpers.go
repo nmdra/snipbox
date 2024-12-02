@@ -50,8 +50,8 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, status in
 
 func (app *application) newTemplateData(r *http.Request) templateData {
 	return templateData{
-		CurrentYear: time.Now().Year(),
-		Flash:       app.sessionManager.PopString(r.Context(), "flash"),
+		CurrentYear:     time.Now().Year(),
+		Flash:           app.sessionManager.PopString(r.Context(), "flash"),
 		IsAuthenticated: app.isAuthenticated(r),
 		CSRFToken:       nosurf.Token(r),
 	}
@@ -59,9 +59,9 @@ func (app *application) newTemplateData(r *http.Request) templateData {
 
 func (app *application) isAuthenticated(r *http.Request) bool {
 	isAuthenticated, ok := r.Context().Value(isAuthenticatedContextKey).(bool)
-    if !ok {
-        return false
-    }
+	if !ok {
+		return false
+	}
 
-    return isAuthenticated
+	return isAuthenticated
 }

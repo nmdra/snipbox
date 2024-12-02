@@ -9,7 +9,7 @@ import (
 
 type Validator struct {
 	NonFieldErrors []string
-	FieldErrors map[string]string
+	FieldErrors    map[string]string
 }
 
 func (v *Validator) Valid() bool {
@@ -27,7 +27,7 @@ func (v *Validator) AddFieldError(key, message string) {
 }
 
 func (v *Validator) AddNonFieldError(message string) {
-    v.NonFieldErrors = append(v.NonFieldErrors, message)
+	v.NonFieldErrors = append(v.NonFieldErrors, message)
 }
 
 func (v *Validator) CheckField(ok bool, key, message string) {
