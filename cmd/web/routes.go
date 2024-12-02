@@ -14,6 +14,8 @@ func (app *application) routes() http.Handler {
 
 	mux.Handle("GET /static/", neuter(fileServer))
 
+	mux.HandleFunc("GET /ping", ping)
+
 	dynamic := alice.New(app.sessionManager.LoadAndSave, noSurf, app.authenticate)
 
 	mux.Handle("GET /{$}", dynamic.ThenFunc(app.home))
