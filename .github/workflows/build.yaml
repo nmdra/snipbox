@@ -3,15 +3,13 @@ name: Build and Publish Docker Image
 # Trigger the workflow on push or pull request to the main branch
 on:
   push:
-    # branches:
-    #   - main
-    #   - release
+    branches:
+      - main
     tags:
       - 'v*.*.*'
   # pull_request:
   #   branches:
   #     - main
-  #     - release
   workflow_dispatch:
 
 jobs:
@@ -35,6 +33,9 @@ jobs:
           go test ./... -v -short
 
   build-and-push:
+    
+    needs: test 
+
     runs-on: ubuntu-latest
     permissions:
       contents: read
