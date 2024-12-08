@@ -17,6 +17,9 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       # Step 1: Checkout the repository code
@@ -44,5 +47,8 @@ jobs:
       # Step 4: Build and push the backend Docker image
       - name: Build and push backend Docker image
         run: |
-          docker build --target production -t ghcr.io/${{ github.repository_owner }}/snipbox:${{ env.COMMIT_SHORT_SHA }} .
+          docker build --target production \
+            -t ghcr.io/${{ github.repository_owner }}/snipbox:${{ env.COMMIT_SHORT_SHA }} . \
+            -t ghcr.io/${{ github.repository_owner }}/snipbox:latest .
           docker push ghcr.io/${{ github.repository_owner }}/snipbox:${{ env.COMMIT_SHORT_SHA }}
+          docker push ghcr.io/${{ github.repository_owner }}/snipbox:latest
