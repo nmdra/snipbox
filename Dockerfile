@@ -30,6 +30,11 @@ RUN go build -o main ./cmd/web
 
 FROM scratch AS production
 
+LABEL org.opencontainers.image.title="Snipbox"
+LABEL org.opencontainers.image.description="A lightweight Go application."
+LABEL org.opencontainers.image.authors="Nimendra <nimendraonline@gmail.com>"
+LABEL org.opencontainers.image.source="https://github.com/nmdra/snipbox"
+
 COPY --from=builder /build/main ./
 
 CMD ["./main"]
