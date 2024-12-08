@@ -15,6 +15,25 @@ on:
   workflow_dispatch:
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Install Go
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23' # Specify the Go version you need
+
+      # Step 3: Run tests
+      - name: Run Go tests
+        run: |
+          go test ./... -v -short
+
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
