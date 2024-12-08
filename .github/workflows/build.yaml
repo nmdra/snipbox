@@ -44,11 +44,10 @@ jobs:
             calculatedSha=$(git rev-parse --short ${{ github.sha }})
             echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
 
-      # Step 4: Build and push the backend Docker image
-      - name: Build and push backend Docker image
-        run: |
-          docker build --target production \
-            -t ghcr.io/${{ github.repository_owner }}/snipbox:${{ env.COMMIT_SHORT_SHA }} . \
-            -t ghcr.io/${{ github.repository_owner }}/snipbox:latest .
-          docker push ghcr.io/${{ github.repository_owner }}/snipbox:${{ env.COMMIT_SHORT_SHA }}
-          docker push ghcr.io/${{ github.repository_owner }}/snipbox:latest
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/snipbox:${{ env.COMMIT_SHORT_SHA }},ghcr.io/${{ github.repository_owner }}/snipbox:latest 
+      
