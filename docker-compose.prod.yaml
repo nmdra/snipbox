@@ -1,0 +1,45 @@
+services:
+  web:
+    image: my-go-app:production
+    container_name: snipbox-prod
+    ports:
+      - "4000:4000" # default app port
+    env_file:
+      - .env
+    volumes:
+      - ./tls/:/tls/
+    networks:
+      - snipbox-net
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:lts 
+    # container_name: snipbox-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: snippetbox
+      MYSQL_USER: web
+      MYSQL_PASSWORD: pass
+    ports:
+      - "3306:3306" # Expose MySQL port (Optional)
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - snipbox-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 2
+  
+volumes:
+  mysql-data:
+    external: true
+
+networks:
+  snipbox-net:
+    driver: bridge
+
